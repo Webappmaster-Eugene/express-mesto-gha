@@ -28,18 +28,30 @@ async function getUser(req, res) {
   }
 }
 
-const createUser = async (req, res) => {
-  const { name, about, avatar } = req.body;
-  try {
-    const newUser = await User.create({ name, about, avatar });
-    if (newUser) {
-      return res.status(201).send({ data: newUser });
-    }
+// const createUser = async (req, res) => {
+//   const { name, about, avatar } = req.body;
+//   try {
+//     const newUser = await User.create({ name, about, avatar });
+//     if (newUser) {
+//       return res.status(201).send({ data: newUser });
+//     }
 
-    throw new Error("ошибка");
-  } catch (err) {
-    return handlerErrors(err, res);
-  }
+//     throw new Error("ошибка");
+//   } catch (err) {
+//     return handlerErrors(err, res);
+//   }
+// };
+
+const createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
+    .then((user) => {
+      res.status(201).send({ data: user });
+    })
+    .catch((err) => {
+      handlerErrors(res, err);
+    });
 };
 
 const updateUser = async (req, res) => {

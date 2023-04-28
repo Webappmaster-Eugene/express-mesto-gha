@@ -11,11 +11,8 @@ const { handlerErrors, handlerOk } = require("../utils/errorHandlers");
 const getUsers = async (req, res) => {
   try {
     const allUsers = await User.find({});
-    // if (allUsers.length !== 0) {
-    //   return res.send(allUsers);
-    // }
+
     return handlerOk(allUsers, res);
-    // return res.send({ message: "Массив пользователй пуст" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
@@ -24,6 +21,7 @@ const getUsers = async (req, res) => {
 async function getUser(req, res) {
   try {
     const user = await User.findById(req.params.userId);
+
     return handlerOk(user, res);
   } catch (err) {
     return handlerErrors(err, res);
@@ -32,10 +30,10 @@ async function getUser(req, res) {
 
 const createUser = async (req, res) => {
   const { name, about, avatar } = req.body;
-
   try {
     const newUser = await User.create({ name, about, avatar });
-    return handlerOk(newUser, res);
+
+    return res.status(201).send({ data: newUser });
   } catch (err) {
     return handlerErrors(err, res);
   }

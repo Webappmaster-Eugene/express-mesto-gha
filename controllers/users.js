@@ -18,15 +18,28 @@ const getUsers = async (req, res) => {
   }
 };
 
-async function getUser(req, res) {
-  try {
-    const user = await User.findById(req.params.userId);
+const getUser = (req, res) => {
+  const id = req.params.userId;
 
-    return handlerOk(user, res);
-  } catch (err) {
-    return handlerErrors(err, res);
-  }
-}
+  User.findById(id)
+
+    .then((user) => {
+      handlerOk(user, res);
+    })
+    .catch((err) => {
+      handlerErrors(res, err);
+    });
+};
+
+// async function getUser(req, res) {
+//   try {
+//     const user = await User.findById(req.params.userId);
+
+//     return handlerOk(user, res);
+//   } catch (err) {
+//     return handlerErrors(err, res);
+//   }
+// }
 
 // const createUser = async (req, res) => {
 //   const { name, about, avatar } = req.body;
@@ -46,6 +59,7 @@ const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
+
     .then((user) => {
       res.status(201).send({ data: user });
     })

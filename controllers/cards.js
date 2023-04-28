@@ -15,21 +15,37 @@ const getCards = async (req, res) => {
 
     return handlerOk(allCards, res);
   } catch (err) {
-    return handlerErrors(err, res);
+    return handlerErrors(res, err);
   }
 };
 
-const createCard = async (req, res) => {
-  try {
-    const owner = req.user._id;
+// const createCard = async (req, res) => {
+//   try {
+//     const owner = req.user._id;
 
-    const { name, link, likes = [], createdAt = Date.now() } = req.body;
-    const newCard = await Card.create({ name, link, owner, likes, createdAt });
+//     const { name, link, likes = [], createdAt = Date.now() } = req.body;
+//     const newCard = await Card.create({ name, link, owner, likes, createdAt });
 
-    return handlerOk(newCard, res);
-  } catch (err) {
-    return handlerErrors(err, res);
-  }
+//     return handlerOk(newCard, res);
+//   } catch (err) {
+//     return handlerErrors(res, err);
+//   }
+// };
+
+// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
+// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
+// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
+
+const createCard = (req, res) => {
+  const { name, link } = req.body;
+  const userId = req.user._id;
+
+  Card.create({ name, link, owner: userId })
+
+    .then((card) => {
+      res.status(201).send({ data: card });
+    })
+    .catch((err) => handlerErrors(res, err));
 };
 
 const deleteCard = async (req, res) => {
@@ -38,7 +54,7 @@ const deleteCard = async (req, res) => {
 
     return handlerOk(removedCard, res);
   } catch (err) {
-    return handlerErrors(err, res);
+    return handlerErrors(res, err);
   }
 };
 
@@ -55,7 +71,7 @@ const likeCard = async (req, res) => {
 
     return handlerOk(likedCard, res);
   } catch (err) {
-    return handlerErrors(err, res);
+    return handlerErrors(res, err);
   }
 };
 
@@ -72,7 +88,7 @@ const dislikeCard = async (req, res) => {
 
     return handlerOk(dislikedCard, res);
   } catch (err) {
-    return handlerErrors(err, res);
+    return handlerErrors(res, err);
   }
 };
 

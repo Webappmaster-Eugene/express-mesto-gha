@@ -37,7 +37,7 @@ const getUser = (req, res) => {
 
 //     return handlerOk(user, res);
 //   } catch (err) {
-//     return handlerErrors(err, res);
+//     return handlerErrors(res, err);
 //   }
 // }
 
@@ -51,9 +51,13 @@ const getUser = (req, res) => {
 
 //     throw new Error("ошибка");
 //   } catch (err) {
-//     return handlerErrors(err, res);
+//     return handlerErrors(res, err);
 //   }
 // };
+
+// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
+// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
+// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
 
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
@@ -79,7 +83,7 @@ const updateUser = async (req, res) => {
     });
     return handlerOk(updatedUser, res);
   } catch (err) {
-    return handlerErrors(err, res);
+    return handlerErrors(res, err);
   }
 };
 
@@ -93,7 +97,7 @@ const updateUserAvatar = async (req, res) => {
 
     return handlerOk(user, res);
   } catch (err) {
-    return handlerErrors(err, res);
+    return handlerErrors(res, err);
   }
 };
 

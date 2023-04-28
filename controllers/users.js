@@ -32,8 +32,11 @@ const createUser = async (req, res) => {
   const { name, about, avatar } = req.body;
   try {
     const newUser = await User.create({ name, about, avatar });
+    if (newUser) {
+      return res.status(201).send({ data: newUser });
+    }
 
-    return res.status(201).send({ data: newUser });
+    throw new Error("ошибка");
   } catch (err) {
     return handlerErrors(err, res);
   }

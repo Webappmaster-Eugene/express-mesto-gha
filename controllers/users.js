@@ -6,15 +6,16 @@
 // eslint-disable-next-line quotes
 
 const User = require("../models/user");
+const { handlerErrors, handlerOk } = require("../utils/errorHandlers");
 
 const getUsers = async (req, res) => {
   try {
     const allUsers = await User.find({});
-    if (allUsers.length !== 0) {
-      return res.send(allUsers);
-    }
-
-    return res.send({ message: "Массив пользователй пуст" });
+    // if (allUsers.length !== 0) {
+    //   return res.send(allUsers);
+    // }
+    return handlerOk(allUsers, res);
+    // return res.send({ message: "Массив пользователй пуст" });
   } catch (err) {
     return res.status(500).send({ message: err.message });
   }
@@ -23,58 +24,35 @@ const getUsers = async (req, res) => {
 async function getUser(req, res) {
   try {
     const user = await User.findById(req.params.userId);
-    if (!user) {
-      return res
-        .status(404)
-        .send({ message: "Пользователь с таким id не найден." });
-    }
-    return res.send(user);
+    return handlerOk(user, res);
   } catch (err) {
-    return res.status(500).send({ message: err.message });
+    return handlerErrors(err, res);
   }
 }
 
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
   const { name, about, avatar } = req.body;
 
-  User.create({ name, about, avatar })
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === "ValidationError") {
-        return res.status(400).send({
-          message: "При создании юзера переданы некорректные данные",
-        });
-      }
-      return res.status(500).send({ message: err.message });
-    });
+  try {
+    const newUser = await User.create({ name, about, avatar });
+    return handlerOk(newUser, res);
+  } catch (err) {
+    return handlerErrors(err, res);
+  }
 };
 
 const updateUser = async (req, res) => {
   try {
     const owner = req.user._id;
-    const {
-      name = User.find({ owner }).name,
-      about = User.find({ owner }).about,
-    } = req.body;
-    const user = await User.findByIdAndUpdate(owner, {
+    const thisUser = User.find({ owner });
+    const { name = thisUser.name, about = thisUser.about } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(owner, {
       name,
       about,
     });
-    if (user) {
-      return res.status(200).send({ data: user });
-    }
-
-    return res
-      .status(404)
-      .send({ message: "Пользователь с таким id не найден." });
+    return handlerOk(updatedUser, res);
   } catch (err) {
-    if (err.name === "ValidationError") {
-      return res.status(400).send({
-        message: "При изменении юзера переданы некорректные данные",
-      });
-    }
-
-    return res.status(500).send({ message: err.message });
+    return handlerErrors(err, res);
   }
 };
 
@@ -86,21 +64,9 @@ const updateUserAvatar = async (req, res) => {
       avatar,
     });
 
-    if (user) {
-      return res.status(200).send({ data: user });
-    }
-
-    return res
-      .status(404)
-      .send({ message: "Пользователь с таким id не найден." });
+    return handlerOk(user, res);
   } catch (err) {
-    if (err.name === "ValidationError") {
-      return res.status(400).send({
-        message: "При изменении аватара переданы некорректные данные",
-      });
-    }
-
-    return res.status(500).send({ message: err.message });
+    return handlerErrors(err, res);
   }
 };
 

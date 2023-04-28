@@ -7,20 +7,15 @@
 // eslint-disable-next-line quotes
 
 const Card = require("../models/card");
+const { handlerErrors, handlerOk } = require("../utils/errorHandlers");
 
 const getCards = async (req, res) => {
   try {
     const allCards = await Card.find({});
 
-    if (allCards.length !== 0) {
-      return res.send(allCards);
-    }
-
-    return res.send({ message: "Массив карточек пуст" });
+    return handlerOk(allCards, res);
   } catch (err) {
-    return res
-      .status(404)
-      .send("Произошла ошибка запроса, проверьте правильность ввода");
+    return handlerErrors(err, res);
   }
 };
 
@@ -31,15 +26,9 @@ const createCard = async (req, res) => {
     const { name, link, likes = [], createdAt = Date.now() } = req.body;
     const newCard = await Card.create({ name, link, owner, likes, createdAt });
 
-    if (newCard) {
-      return res.send(newCard);
-    }
-
-    return res.send({ message: "Карточка не создана" });
+    return handlerOk(newCard, res);
   } catch (err) {
-    return res
-      .status(404)
-      .send("Произошла ошибка запроса, проверьте правильность ввода");
+    return handlerErrors(err, res);
   }
 };
 
@@ -47,15 +36,9 @@ const deleteCard = async (req, res) => {
   try {
     const removedCard = await Card.findByIdAndRemove(req.params.cardId);
 
-    if (removedCard) {
-      return res.send(removedCard);
-    }
-
-    return res.send({ message: "Карточка не удалена" });
+    return handlerOk(removedCard, res);
   } catch (err) {
-    return res
-      .status(404)
-      .send("Произошла ошибка запроса, проверьте правильность ввода");
+    return handlerErrors(err, res);
   }
 };
 
@@ -70,15 +53,9 @@ const likeCard = async (req, res) => {
       { new: true }
     );
 
-    if (likedCard) {
-      return res.send(likedCard);
-    }
-
-    return res.send({ message: "Карточка не лайкнута" });
+    return handlerOk(likedCard, res);
   } catch (err) {
-    return res
-      .status(404)
-      .send("Произошла ошибка запроса, проверьте правильность ввода");
+    return handlerErrors(err, res);
   }
 };
 
@@ -93,15 +70,9 @@ const dislikeCard = async (req, res) => {
       { new: true }
     );
 
-    if (dislikedCard) {
-      return res.send(dislikedCard);
-    }
-
-    return res.send({ message: "Не получилось удалить ваш лайк из карточки" });
+    return handlerOk(dislikedCard, res);
   } catch (err) {
-    return res
-      .status(404)
-      .send("Произошла ошибка запроса, проверьте правильность ввода");
+    return handlerErrors(err, res);
   }
 };
 

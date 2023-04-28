@@ -1,0 +1,7 @@
+{
+    "babel": true,
+    "plugins": ["jsdom-quokka-plugin"],
+    "jsdom": {
+        "file": "./src/index.js"
+    }
+}

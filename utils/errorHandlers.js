@@ -24,7 +24,7 @@ const handlerErrors = (res, err) => {
 
 const handlerOk = (findedObject, res) => {
   if (findedObject) {
-    console.log(findedObject);
+    console.log("findedObject =>", findedObject);
     res.send({ data: findedObject });
   } else {
     res.status(ERROR_NOT_FOUND).send({

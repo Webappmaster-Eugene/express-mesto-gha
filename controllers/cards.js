@@ -48,26 +48,26 @@ const createCard = (req, res) => {
     .catch((err) => handlerErrors(res, err));
 };
 
-// const deleteCard = async (req, res) => {
-//   try {
-//     const removedCard = await Card.findByIdAndRemove(req.params.cardId);
+const deleteCard = async (req, res) => {
+  try {
+    const removedCard = await Card.findByIdAndRemove(req.params.cardId);
 
-//     return handlerOk(removedCard, res);
-//   } catch (err) {
-//     return handlerErrors(res, err);
-//   }
-// };
-
-const deleteCard = (req, res) => {
-  const { id } = req.params;
-
-  Card.findByIdAndRemove(id)
-
-    .then((card) => {
-      handlerOk(card, res);
-    })
-    .catch((err) => handlerErrors(res, err));
+    return handlerOk(removedCard, res);
+  } catch (err) {
+    return handlerErrors(res, err);
+  }
 };
+
+// const deleteCard = (req, res) => {
+//   const userId = req.user._id;
+
+//   Card.findByIdAndRemove(userId)
+
+//     .then((card) => {
+//       handlerOk(card, res);
+//     })
+//     .catch((err) => handlerErrors(res, err));
+// };
 
 const likeCard = async (req, res) => {
   try {

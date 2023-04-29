@@ -72,66 +72,75 @@ const createUser = (req, res) => {
     });
 };
 
-// const updateUser = async (req, res) => {
-//   try {
-//     const owner = req.user._id;
-//     const thisUser = User.find({ owner });
-//     const { name = thisUser.name, about = thisUser.about } = req.body;
-//     const updatedUser = await User.findByIdAndUpdate(owner, {
-//       name,
-//       about,
-//     });
-//     return handlerOk(updatedUser, res);
-//   } catch (err) {
-//     return handlerErrors(res, err);
-//   }
-// };
+const updateUser = async (req, res) => {
+  try {
+    const owner = req.user._id;
+    const thisUser = await User.find({ owner });
+    const { name = thisUser.name, about = thisUser.about } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      owner,
+      {
+        name,
+        about,
+      },
+      { new: true, runValidators: true }
+    );
 
-const updateUser = (req, res) => {
-  const { name, about } = req.body;
-  const id = req.params.userId;
-
-  User.findByIdAndUpdate(
-    id,
-    { name, about },
-    { new: true, runValidators: true }
-  )
-
-    .then((user) => {
-      handlerOk(user, res);
-    })
-    .catch((err) => {
-      handlerErrors(res, err);
-    });
+    return handlerOk(updatedUser, res);
+  } catch (err) {
+    return handlerErrors(res, err);
+  }
 };
 
-// const updateUserAvatar = async (req, res) => {
-//   try {
-//     const owner = req.user._id;
-//     const { avatar } = req.body;
-//     const user = await User.findByIdAndUpdate(owner, {
-//       avatar,
-//     });
+// const updateUser = (req, res) => {
+//   const { name, about } = req.body;
+//   const id = req.params.userId;
 
-//     return handlerOk(user, res);
-//   } catch (err) {
-//     return handlerErrors(res, err);
-//   }
+//   User.findByIdAndUpdate(
+//     id,
+//     { name, about },
+//     { new: true, runValidators: true }
+//   )
+
+//     .then((user) => {
+//       handlerOk(user, res);
+//     })
+//     .catch((err) => {
+//       handlerErrors(res, err);
+//     });
 // };
 
-const updateUserAvatar = (req, res) => {
-  const { avatar } = req.body;
-  const id = req.params.userId;
+const updateUserAvatar = async (req, res) => {
+  try {
+    const owner = req.user._id;
+    const { avatar } = req.body;
+    const user = await User.findByIdAndUpdate(
+      owner,
+      {
+        avatar,
+      },
+      { new: true, runValidators: true }
+    );
 
-  User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
-
-    .then((user) => {
-      handlerOk(user, res);
-    })
-    .catch((err) => {
-      handlerErrors(res, err);
-    });
+    return handlerOk(user, res);
+  } catch (err) {
+    return handlerErrors(res, err);
+  }
 };
+
+// const updateUserAvatar = (req, res) => {
+//   const { avatar } = req.body;
+//   const id = req.params.userId;
+
+//   User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
+
+//     .then((user) => {
+//       handlerOk(user, res);
+//     })
+//     .catch((err) => {
+//       handlerErrors(res, err);
+//     });
+// };
 
 module.exports = {
   getUsers,

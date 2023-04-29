@@ -7,11 +7,9 @@ const {
 
 const handlerErrors = (res, err) => {
   if (err.name === "CastError") {
-    res
-      .status(ERROR_NOT_CORRECT_VALUE)
-      .send({
-        message: "Вы ввели несуществующий ID, измените параметр в строке",
-      });
+    res.status(ERROR_NOT_CORRECT_VALUE).send({
+      message: "Вы ввели несуществующий ID, измените параметр в строке",
+    });
   } else if (err.name === "ValidationError") {
     const message = Object.values(err.errors)
       .map((error) => error.message)
@@ -24,13 +22,13 @@ const handlerErrors = (res, err) => {
   }
 };
 
-const handlerOk = (findingUser, res) => {
-  if (findingUser) {
-    res.send({ data: findingUser });
+const handlerOk = (findedObject, res) => {
+  if (findedObject) {
+    console.log(findedObject);
+    res.send({ data: findedObject });
   } else {
     res.status(ERROR_NOT_FOUND).send({
-      message:
-        "Пользователь (карточка) с таким id не найдены! Введите верный ID!",
+      message: "Пользователь (карточка) с таким id не найдены!",
     });
   }
 };

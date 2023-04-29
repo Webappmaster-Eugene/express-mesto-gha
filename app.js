@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable quotes */
 const express = require("express");
 const mongoose = require("mongoose");
@@ -13,10 +14,10 @@ const { routerCard } = require("./routes/cards");
 mongoose
   .connect("mongodb://localhost:27017/mestodb")
   .then(() => {
-    console.log("database ok");
+    console.log("Подключение к БД 'mestodb' прошло успешно");
   })
-  .catch(() => {
-    console.log("database err");
+  .catch((err) => {
+    console.log(`Подключение к БД 'mestodb' неудачное! ${err}`);
   });
 
 app.use((req, res, next) => {
@@ -31,7 +32,9 @@ app.use("/users", routerUser);
 app.use("/cards", routerCard);
 
 app.use((req, res, next) => {
-  next(res.status(404).send({ message: "URL not found" }));
+  next(
+    res.status(404).send({ message: "введенный URL не найден в роутах сайта" })
+  );
 });
 
 // app.get("*", (req, res) => {

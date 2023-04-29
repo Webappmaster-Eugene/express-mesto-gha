@@ -1,7 +1,10 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable quotes */
-const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
+const { Schema, model } = require("mongoose");
+const validator = require("validator");
+
+const userSchema = new Schema({
   name: {
     type: String,
     required: [true, 'Поле "name" обязательное для заполнения'],
@@ -17,7 +20,12 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     required: [true, 'Поле "avatar" обязательное для заполнения'],
+    validate: {
+      validator: (v) => validator.isURL(v),
+      message: "Некорректный URL картинки для аватара",
+    },
   },
+  versionKey: false,
 });
 
-module.exports = mongoose.model("user", userSchema);
+module.exports = model("user", userSchema);

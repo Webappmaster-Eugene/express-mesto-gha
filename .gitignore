@@ -8,6 +8,9 @@ yarn-error.log*
 # Optional npm cache directory
 .npm
 
+# Plugins and other packages
+.quokka
+
 # Optional REPL history
 .DS_Store
 .idea

@@ -75,8 +75,9 @@ const createUser = (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const owner = req.user._id;
-    const thisUser = await User.find({ owner });
-    const { name = thisUser.name, about = thisUser.about } = req.body;
+    // const thisUser = await User.find({ owner });
+    // const { name = thisUser.name, about = thisUser.about } = req.body;
+    const { name, about } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       owner,
       {

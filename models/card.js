@@ -1,6 +1,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable quotes */
+
 const { Schema, model, mongoose } = require("mongoose");
+const validator = require("validator");
 
 const cardSchema = new Schema({
   name: {
@@ -12,7 +14,10 @@ const cardSchema = new Schema({
   link: {
     type: String,
     required: [true, 'Поле "link" обязательное для заполнения'],
-    default: [],
+    validate: {
+      validator: (v) => validator.isURL(v),
+      message: "Некорректный URL картинки карточки",
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -30,6 +35,7 @@ const cardSchema = new Schema({
     type: Date,
     default: Date.now(),
   },
+  versionKey: false,
 });
 
 module.exports = model("card", cardSchema);

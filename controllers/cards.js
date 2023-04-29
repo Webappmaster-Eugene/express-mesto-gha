@@ -19,44 +19,40 @@ const getCards = async (req, res) => {
   }
 };
 
-// const createCard = async (req, res) => {
-//   try {
-//     const owner = req.user._id;
+const createCard = async (req, res) => {
+  try {
+    const owner = req.user._id;
 
-//     const { name, link, likes = [], createdAt = Date.now() } = req.body;
-//     const newCard = await Card.create({ name, link, owner, likes, createdAt });
+    const { name, link, likes = [], createdAt = Date.now() } = req.body;
+    const newCard = await Card.create({ name, link, owner, likes, createdAt });
 
-//     return handlerOk(newCard, res);
-//   } catch (err) {
-//     return handlerErrors(res, err);
-//   }
-// };
-
-// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
-// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
-// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
-
-const createCard = (req, res) => {
-  const { name, link } = req.body;
-  const userId = req.user._id;
-
-  Card.create({ name, link, owner: userId })
-
-    .then((card) => {
-      res.status(201).send({ data: card });
-    })
-    .catch((err) => handlerErrors(res, err));
+    return res.status(201).send({ data: newCard });
+  } catch (err) {
+    return handlerErrors(res, err);
+  }
 };
+
+// const createCard = (req, res) => {
+//   const { name, link } = req.body;
+//   const userId = req.user._id;
+
+//   Card.create({ name, link, owner: userId })
+
+//     .then((card) => {
+//       res.status(201).send({ data: card });
+//     })
+//     .catch((err) => handlerErrors(res, err));
+// };
 
 const deleteCard = async (req, res) => {
   try {
     const id = req.params.cardId;
-    if (id.length !== 24) {
-      return res.status(400).send({
-        message: "Вы ввели несуществующий ID, измените параметр в строке",
-      });
-    }
-    const removedCard = await Card.findByIdAndRemove(req.params.cardId);
+    // if (id.length !== 24) {
+    //   return res.status(400).send({
+    //     message: "Вы ввели несуществующий ID, измените параметр в строке",
+    //   });
+    // }
+    const removedCard = await Card.findByIdAndRemove(id);
 
     return handlerOk(removedCard, res);
   } catch (err) {
@@ -84,7 +80,7 @@ const likeCard = async (req, res) => {
 const dislikeCard = async (req, res) => {
   try {
     const owner = req.user._id;
-    const dislikedCard = await Card.findByIdAndRemove(
+    const dislikedCard = await Card.findByIdAndUpdate(
       req.params.cardId,
       {
         $pull: { likes: owner },

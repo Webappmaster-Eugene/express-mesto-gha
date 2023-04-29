@@ -18,65 +18,58 @@ const getUsers = async (req, res) => {
   }
 };
 
-const getUser = (req, res) => {
-  const id = req.params.userId;
+// const getUser = (req, res) => {
+//   const id = req.params.userId;
 
-  User.findById(id)
+//   User.findById(id)
 
-    .then((user) => {
-      handlerOk(user, res);
-    })
-    .catch((err) => {
-      handlerErrors(res, err);
-    });
-};
-
-// async function getUser(req, res) {
-//   try {
-//     const user = await User.findById(req.params.userId);
-
-//     return handlerOk(user, res);
-//   } catch (err) {
-//     return handlerErrors(res, err);
-//   }
-// }
-
-// const createUser = async (req, res) => {
-//   const { name, about, avatar } = req.body;
-//   try {
-//     const newUser = await User.create({ name, about, avatar });
-//     if (newUser) {
-//       return res.status(201).send({ data: newUser });
-//     }
-
-//     throw new Error("ошибка");
-//   } catch (err) {
-//     return handlerErrors(res, err);
-//   }
+//     .then((user) => {
+//       handlerOk(user, res);
+//     })
+//     .catch((err) => {
+//       handlerErrors(res, err);
+//     });
 // };
 
-// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
-// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
-// Почему этот код проходит, а тот, что выше через async/await нет? Помогите ПОЖАЛУЙСТА!
+async function getUser(req, res) {
+  try {
+    const user = await User.findById(req.params.userId);
 
-const createUser = (req, res) => {
+    return handlerOk(user, res);
+  } catch (err) {
+    return handlerErrors(res, err);
+  }
+}
+
+const createUser = async (req, res) => {
   const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-
-    .then((user) => {
-      res.status(201).send({ data: user });
-    })
-    .catch((err) => {
-      handlerErrors(res, err);
-    });
+  try {
+    const newUser = await User.create({ name, about, avatar });
+    if (newUser) {
+      return res.status(201).send({ data: newUser });
+    }
+    return handlerOk(newUser, res);
+  } catch (err) {
+    return handlerErrors(res, err);
+  }
 };
+
+// const createUser = (req, res) => {
+//   const { name, about, avatar } = req.body;
+
+//   User.create({ name, about, avatar })
+
+//     .then((user) => {
+//       res.status(201).send({ data: user });
+//     })
+//     .catch((err) => {
+//       handlerErrors(res, err);
+//     });
+// };
 
 const updateUser = async (req, res) => {
   try {
     const owner = req.user._id;
-    // const thisUser = await User.find({ owner });
-    // const { name = thisUser.name, about = thisUser.about } = req.body;
     const { name, about } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
       owner,
@@ -92,24 +85,6 @@ const updateUser = async (req, res) => {
     return handlerErrors(res, err);
   }
 };
-
-// const updateUser = (req, res) => {
-//   const { name, about } = req.body;
-//   const id = req.params.userId;
-
-//   User.findByIdAndUpdate(
-//     id,
-//     { name, about },
-//     { new: true, runValidators: true }
-//   )
-
-//     .then((user) => {
-//       handlerOk(user, res);
-//     })
-//     .catch((err) => {
-//       handlerErrors(res, err);
-//     });
-// };
 
 const updateUserAvatar = async (req, res) => {
   try {
@@ -128,20 +103,6 @@ const updateUserAvatar = async (req, res) => {
     return handlerErrors(res, err);
   }
 };
-
-// const updateUserAvatar = (req, res) => {
-//   const { avatar } = req.body;
-//   const id = req.params.userId;
-
-//   User.findByIdAndUpdate(id, { avatar }, { new: true, runValidators: true })
-
-//     .then((user) => {
-//       handlerOk(user, res);
-//     })
-//     .catch((err) => {
-//       handlerErrors(res, err);
-//     });
-// };
 
 module.exports = {
   getUsers,

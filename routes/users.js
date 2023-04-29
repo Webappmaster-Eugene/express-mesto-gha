@@ -1,4 +1,5 @@
 /* eslint-disable quotes */
+
 const routerUser = require("express").Router();
 const {
   getUsers,

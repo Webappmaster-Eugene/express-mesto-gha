@@ -32,26 +32,9 @@ const createCard = async (req, res) => {
   }
 };
 
-// const createCard = (req, res) => {
-//   const { name, link } = req.body;
-//   const userId = req.user._id;
-
-//   Card.create({ name, link, owner: userId })
-
-//     .then((card) => {
-//       res.status(201).send({ data: card });
-//     })
-//     .catch((err) => handlerErrors(res, err));
-// };
-
 const deleteCard = async (req, res) => {
   try {
     const id = req.params.cardId;
-    // if (id.length !== 24) {
-    //   return res.status(400).send({
-    //     message: "Вы ввели несуществующий ID, измените параметр в строке",
-    //   });
-    // }
     const removedCard = await Card.findByIdAndRemove(id);
 
     return handlerOk(removedCard, res);

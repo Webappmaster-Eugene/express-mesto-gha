@@ -48,35 +48,21 @@ const createCard = (req, res) => {
     .catch((err) => handlerErrors(res, err));
 };
 
-const deleteCard = (req, res) => {
-  const userId = req.user._id;
-  Card.findByIdAndRemove(userId)
-    .then((card) => {
-      handlerOk(card, res);
-    })
-    .catch((err) => handlerErrors(res, err));
+const deleteCard = async (req, res) => {
+  try {
+    const id = req.params.cardId;
+    if (id.length !== 24) {
+      return res.status(400).send({
+        message: "Вы ввели несуществующий ID, измените параметр в строке",
+      });
+    }
+    const removedCard = await Card.findByIdAndRemove(req.params.cardId);
+
+    return handlerOk(removedCard, res);
+  } catch (err) {
+    return handlerErrors(res, err);
+  }
 };
-
-// const deleteCard = async (req, res) => {
-//   try {
-//     const removedCard = await Card.findByIdAndRemove(req.params.cardId);
-
-//     return handlerOk(removedCard, res);
-//   } catch (err) {
-//     return handlerErrors(res, err);
-//   }
-// };
-
-// const deleteCard = (req, res) => {
-//   const userId = req.user._id;
-
-//   Card.findByIdAndRemove(userId)
-
-//     .then((card) => {
-//       handlerOk(card, res);
-//     })
-//     .catch((err) => handlerErrors(res, err));
-// };
 
 const likeCard = async (req, res) => {
   try {

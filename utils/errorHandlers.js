@@ -27,6 +27,7 @@ const handlerOk = (findedObject, res) => {
     console.log("findedObject =>", findedObject);
     res.send({ data: findedObject });
   } else {
+    console.log("not found =>", findedObject);
     res.status(ERROR_NOT_FOUND).send({
       message: "Пользователь (карточка) с таким id не найдены!",
     });

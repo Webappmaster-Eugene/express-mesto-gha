@@ -7,7 +7,7 @@ const cardSchema = new Schema({
     type: String,
     required: [true, 'Поле "name" обязательное для заполнения'],
     minlength: [2, 'Поле "name" должно содержать не менее 2 символов'],
-    maxlength: [30, 'Поле "name" должно содержать не более 2 символов'],
+    maxlength: [30, 'Поле "name" должно содержать не более 30 символов'],
   },
   link: {
     type: String,

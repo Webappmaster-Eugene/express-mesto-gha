@@ -10,7 +10,7 @@ const {
 } = require("../controllers/cards");
 
 routerCard.get("/", getCards);
-routerCard.delete("/:", deleteCard);
+routerCard.delete("/:cardId", deleteCard);
 routerCard.post("/", createCard);
 routerCard.put("/:cardId/likes", likeCard);
 routerCard.delete("/:cardId/likes", dislikeCard);

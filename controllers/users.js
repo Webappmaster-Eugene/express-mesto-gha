@@ -18,19 +18,6 @@ const getUsers = async (req, res) => {
   }
 };
 
-// const getUser = (req, res) => {
-//   const id = req.params.userId;
-
-//   User.findById(id)
-
-//     .then((user) => {
-//       handlerOk(user, res);
-//     })
-//     .catch((err) => {
-//       handlerErrors(res, err);
-//     });
-// };
-
 async function getUser(req, res) {
   try {
     const user = await User.findById(req.params.userId);
@@ -53,19 +40,6 @@ const createUser = async (req, res) => {
     return handlerErrors(res, err);
   }
 };
-
-// const createUser = (req, res) => {
-//   const { name, about, avatar } = req.body;
-
-//   User.create({ name, about, avatar })
-
-//     .then((user) => {
-//       res.status(201).send({ data: user });
-//     })
-//     .catch((err) => {
-//       handlerErrors(res, err);
-//     });
-// };
 
 const updateUser = async (req, res) => {
   try {

@@ -11,12 +11,13 @@ const bcrypt = require("bcrypt");
 const JWT = require("jsonwebtoken");
 const User = require("../models/user");
 
-const { handlerOk } = require("../utils/errorHandlers");
+// const { handlerOk } = require("../utils/errorHandlers");
 
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
+
     if (!user) {
       return res
         .message(401)
@@ -28,16 +29,22 @@ const login = async (req, res) => {
       return res.message(401).send({ message: "Вы ввели неправильный пароль" });
     }
 
-    const authorizedUser = User.findUserByCredentials(email, password);
-    const payload = authorizedUser._id;
+    const payload = user._id;
 
-    const token = JWT.sign(payload, "secretkey");
+    const token = JWT.sign({ payload }, "secretkey");
+
+    // const cookie = res.cookie("jwt", token, {
+    //   httpOnly: true,
+    //   sameSite: "strict",
+    // });
 
     res.cookie("jwt", token, {
       httpOnly: true,
       sameSite: "strict",
     });
-    return handlerOk({}, res);
+
+    return res.status(200).send({ token });
+    // return handlerOk({}, res);
   } catch (err) {
     // return handlerErrors(res, err);
     return res.status(500).send({ message: err.message });

@@ -9,6 +9,7 @@ const path = require("path");
 
 const { login } = require("./controllers/login");
 const { createUser } = require("./controllers/users");
+// const auth = require("./middlewares/auth");
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -38,6 +39,9 @@ app.post("/signin", login);
 app.post("/signup", createUser);
 app.use("/users", routerUser);
 app.use("/cards", routerCard);
+
+// app.use("/users", auth, routerUser);
+// app.use("/cards", auth, routerCard);
 
 app.use((req, res) => {
   res.status(404).send({ message: "Введенный URL не найден в роутах сайта" });

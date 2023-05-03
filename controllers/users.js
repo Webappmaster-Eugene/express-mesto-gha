@@ -32,27 +32,27 @@ async function getUser(req, res) {
 }
 
 const createUser = async (req, res) => {
-  if (!req.body) {
-    return res
-      .status(404)
-      .send({
+  try {
+    if (!req.body) {
+      return res.status(404).send({
         message: "Не отправлено тело запроса для POST-создания пользователя",
       });
-  }
+    }
 
-  const { name, email, password, about, avatar } = req.body;
+    const { name, email, password, about, avatar } = req.body;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  if (!password || !email) {
-    res.status(400).send({
-      message: "Электронная почта и пароль обязательны для заполения",
-    });
-  }
-  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    if (!password || !email) {
+      res.status(400).send({
+        message: "Электронная почта и пароль обязательны для заполения",
+      });
+    }
+
     const newUser = await User.create({
       name,
       email,
-      hashedPassword,
+      password: hashedPassword,
       about,
       avatar,
     });

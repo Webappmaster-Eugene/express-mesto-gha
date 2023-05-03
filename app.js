@@ -5,6 +5,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const helmet = require("helmet");
+const path = require("path");
+
+const { login } = require("./controllers/login");
+const { createUser } = require("./controllers/users");
 
 const app = express();
 const { PORT = 3000 } = process.env;
@@ -15,30 +19,28 @@ app.use(helmet());
 const { routerUser } = require("./routes/users");
 const { routerCard } = require("./routes/cards");
 
+const DATABASE = "localhost:27017/mestodb";
+
 mongoose
-  .connect("mongodb://localhost:27017/mestodb")
+  .connect(`mongodb://${DATABASE}`)
   .then(() => {
-    console.log("Подключение к БД 'mestodb' прошло успешно");
+    console.log(`Подключение к БД '${DATABASE}' прошло успешно`);
   })
   .catch((err) => {
-    console.log(`Подключение к БД 'mestodb' неудачное! ${err}`);
+    console.log(
+      `Подключение к БД '${DATABASE}' неудачное! Проверьте на ошибки - ${err}`
+    );
   });
 
-app.use((req, res, next) => {
-  req.user = {
-    _id: "644a98b0f121166256b8c031",
-  };
+app.use(express.static(path.join(__dirname, "public")));
 
-  next();
-});
-
+app.post("/signin", login);
+app.post("/signup", createUser);
 app.use("/users", routerUser);
 app.use("/cards", routerCard);
 
-app.use((req, res, next) => {
-  next(
-    res.status(404).send({ message: "введенный URL не найден в роутах сайта" })
-  );
+app.use((req, res) => {
+  res.status(404).send({ message: "Введенный URL не найден в роутах сайта" });
 });
 
 app.listen(PORT, () => {

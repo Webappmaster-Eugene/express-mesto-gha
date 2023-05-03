@@ -1,3 +1,4 @@
+/* eslint-disable brace-style */
 /* eslint-disable quotes */
 
 const {
@@ -16,6 +17,15 @@ const handlerErrors = (res, err) => {
       .map((error) => error.message)
       .join(";");
     res.status(ERROR_NOT_CORRECT_VALUE).send({ message });
+  }
+  // else if (err.name === 'MongoError' || err.code === 11000) {
+  else if (err.name === "MongoError") {
+    res
+      .status(409)
+      .send({
+        message:
+          "Данный email уже зарегистрирован. Попробуйте ввести другой адрес электронной почты",
+      });
   } else {
     res
       .status(ERROR_AT_SERVER)

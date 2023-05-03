@@ -1,3 +1,5 @@
+/* eslint-disable object-curly-newline */
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable quotes */
 /* eslint-disable comma-dangle */
@@ -5,6 +7,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 // eslint-disable-next-line quotes
 
+const bcrypt = require("bcrypt");
 const User = require("../models/user");
 const { handlerErrors, handlerOk } = require("../utils/errorHandlers");
 
@@ -29,12 +32,35 @@ async function getUser(req, res) {
 }
 
 const createUser = async (req, res) => {
-  const { name, about, avatar } = req.body;
+  if (!req.body) {
+    return res
+      .status(404)
+      .send({
+        message: "Не отправлено тело запроса для POST-создания пользователя",
+      });
+  }
+
+  const { name, email, password, about, avatar } = req.body;
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  if (!password || !email) {
+    res.status(400).send({
+      message: "Электронная почта и пароль обязательны для заполения",
+    });
+  }
   try {
-    const newUser = await User.create({ name, about, avatar });
+    const newUser = await User.create({
+      name,
+      email,
+      hashedPassword,
+      about,
+      avatar,
+    });
+
     if (newUser) {
       return res.status(201).send({ data: newUser });
     }
+
     return handlerOk(newUser, res);
   } catch (err) {
     return handlerErrors(res, err);

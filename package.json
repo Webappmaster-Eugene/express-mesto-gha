@@ -36,7 +36,9 @@
     "helmet": "^6.1.5",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.5",
-    "validator": "^13.9.0"
+    "validator": "^13.9.0",
+    "dotenv": "^16.0.3",
+    "joi": "^17.9.2"
   },
   "devDependencies": {
     "eslint": "^8.39.0",

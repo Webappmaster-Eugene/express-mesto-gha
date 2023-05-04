@@ -6,8 +6,9 @@
 /* eslint-disable implicit-arrow-linebreak */
 // eslint-disable-next-line quotes
 
-const Card = require("../models/card");
-const { handlerErrors, handlerOk } = require("../utils/errorHandlers");
+const Card = require('../models/card');
+const { handlerErrors, handlerOk } = require('../utils/errorHandlers');
+const { CREATE_SUCCESS_CODE } = require('../utils/goodResponseCodes');
 
 const getCards = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ const createCard = async (req, res) => {
     const { name, link, likes = [], createdAt = Date.now() } = req.body;
     const newCard = await Card.create({ name, link, owner, likes, createdAt });
 
-    return res.status(201).send({ data: newCard });
+    return res.status(CREATE_SUCCESS_CODE).send({ data: newCard });
   } catch (err) {
     return handlerErrors(res, err);
   }
@@ -51,7 +52,7 @@ const likeCard = async (req, res) => {
       {
         $addToSet: { likes: owner },
       },
-      { new: true }
+      { new: true },
     );
 
     return handlerOk(likedCard, res);
@@ -68,7 +69,7 @@ const dislikeCard = async (req, res) => {
       {
         $pull: { likes: owner },
       },
-      { new: true }
+      { new: true },
     );
 
     return handlerOk(dislikedCard, res);

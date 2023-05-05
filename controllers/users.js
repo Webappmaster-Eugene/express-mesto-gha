@@ -1,181 +1,91 @@
-/* eslint-disable object-curly-newline */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable quotes */
-/* eslint-disable comma-dangle */
-/* eslint-disable function-paren-newline */
-/* eslint-disable implicit-arrow-linebreak */
-// eslint-disable-next-line quotes
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-const bcrypt = require('bcrypt');
-const JWT = require('jsonwebtoken');
-const User = require('../models/user');
-
-const { CREATE_SUCCESS_CODE } = require('../utils/goodResponseCodes');
-const {
-  ERROR_NOT_CORRECT_VALUE_400,
-  ERROR_NOT_FOUND_404,
-} = require('../utils/errors');
+const { CREATE_CODE } = require('../utils/constants');
 
 const { NODE_ENV, SECRET_KEY } = process.env;
 
-const { handlerErrors, handlerOk } = require('../utils/errorHandlers');
+const User = require('../models/users');
 
-const getUsers = async (req, res, next) => {
-  try {
-    const allUsers = await User.find({});
-
-    return handlerOk(allUsers, res);
-  } catch (err) {
-    // return handlerErrors(res, err);
-    // return res.status(500).send({ message: err.message });
-    return next(err);
-  }
+module.exports.getAllUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send(users))
+    .catch(next);
 };
 
-async function getUser(req, res, next) {
-  try {
-    const user = await User.findById(req.params.userId);
-
-    return handlerOk(user, res);
-  } catch (err) {
-    // return handlerErrors(res, err);
-    return next(err);
-  }
-}
-
-// const login = async (req, res, next) => {
-const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email }).select('+password');
-
-    if (!user) {
-      return res
-        .message(401)
-        .send({ message: 'Вы ввели несуществующий email' });
-    }
-
-    const result = bcrypt.compare(password, user.password);
-    if (!result) {
-      return res.message(401).send({ message: 'Вы ввели неправильный пароль' });
-    }
-
-    const payload = user._id;
-
-    const token = JWT.sign(
-      { payload },
-      NODE_ENV === 'production' ? SECRET_KEY : 'secretkey',
-      {
-        expiresIn: '7d',
-      },
-    );
-
-    res.cookie('jwt', token, {
-      maxAge: 3600000 * 24 * 7,
-      httpOnly: true,
-      sameSite: true,
-    });
-    return res.send({ message: 'Успешный вход' });
-
-    // const cookie = res.cookie("jwt", token, {
-    //   httpOnly: true,
-    //   sameSite: "strict",
-    // });
-
-    // res.cookie('jwt', token, {
-    //   httpOnly: true,
-    //   sameSite: 'strict',
-    // });
-
-    // return res.status(200).send({ token });
-    // return handlerOk({}, res);
-  } catch (err) {
-    // return handlerErrors(res, err);
-    // return res.status(500).send({ message: err.message });
-    return next(err);
-  }
+const findUserById = (req, res, requiredData, next) => {
+  User.findById(requiredData)
+    .orFail()
+    .then((user) => res.send(user))
+    .catch(next);
 };
 
-const createUser = async (req, res, next) => {
-  try {
-    if (!req.body) {
-      return res.status(ERROR_NOT_FOUND_404).send({
-        message: 'Не отправлено тело запроса для POST-создания пользователя',
-      });
-    }
+module.exports.getUser = (req, res, next) => {
+  const requiredData = req.params.userId;
+  findUserById(req, res, requiredData, next);
+};
 
-    const { name, email, password, about, avatar } = req.body;
+module.exports.getUserInfo = (req, res, next) => {
+  const requiredData = req.user._id;
+  findUserById(req, res, requiredData, next);
+};
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    if (!password || !email) {
-      res.status(ERROR_NOT_CORRECT_VALUE_400).send({
-        message: 'Электронная почта и пароль обязательны для заполения',
-      });
-    }
-
-    const newUser = await User.create({
+module.exports.createUser = (req, res, next) => {
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
       name,
-      email,
-      password: hashedPassword,
       about,
       avatar,
-    });
-
-    if (newUser) {
-      return res.status(CREATE_SUCCESS_CODE).send({ data: newUser });
-    }
-
-    return handlerOk(newUser, res);
-  } catch (err) {
-    // return handlerErrors(res, err);
-    return next(err);
-  }
+      email,
+      password: hash,
+    }))
+    .then((user) => {
+      const data = user.toObject();
+      delete data.password;
+      res.status(CREATE_CODE).send(data);
+    })
+    .catch(next);
 };
 
-const updateUser = async (req, res) => {
-  try {
-    const owner = req.user._id;
-    const { name, about } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(
-      owner,
-      {
-        name,
-        about,
-      },
-      { new: true, runValidators: true },
-    );
-
-    return handlerOk(updatedUser, res);
-  } catch (err) {
-    return handlerErrors(res, err);
-  }
+const userUpdate = (req, res, updateData, next) => {
+  User.findByIdAndUpdate(req.user._id, updateData, { new: true, runValidators: true })
+    .orFail()
+    .then((user) => res.send(user))
+    .catch(next);
 };
 
-const updateUserAvatar = async (req, res) => {
-  try {
-    const owner = req.user._id;
-    const { avatar } = req.body;
-    const user = await User.findByIdAndUpdate(
-      owner,
-      {
-        avatar,
-      },
-      { new: true, runValidators: true },
-    );
-
-    return handlerOk(user, res);
-  } catch (err) {
-    return handlerErrors(res, err);
-  }
+module.exports.updateUserInfo = (req, res, next) => {
+  const updateData = req.body;
+  userUpdate(req, res, updateData, next);
 };
 
-module.exports = {
-  getUsers,
-  getUser,
-  login,
-  createUser,
-  updateUser,
-  updateUserAvatar,
+module.exports.updateUserAvatar = (req, res, next) => {
+  const updateData = req.body;
+  userUpdate(req, res, updateData, next);
+};
+
+module.exports.login = (req, res, next) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? SECRET_KEY : 'dev-secret-key',
+        { expiresIn: '7d' },
+      );
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: true,
+      });
+      res.send({ message: 'Успешный вход' });
+    })
+    .catch(next);
 };

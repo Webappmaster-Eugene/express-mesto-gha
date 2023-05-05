@@ -1,10 +1,10 @@
-const { ERROR_NOT_FOUND_404 } = require('../utils/errors');
+const { NOT_FOUND_CODE } = require('../utils/constants');
 
 // AUTHORIZATION ERROR
 class ErrorNotFound extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = ERROR_NOT_FOUND_404;
+    this.statusCode = NOT_FOUND_CODE;
   }
 }
 

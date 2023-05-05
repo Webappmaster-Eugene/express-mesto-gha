@@ -1,9 +1,9 @@
-const { ERROR_UNAUTHORIZED_ACCESS_401 } = require('../utils/errors');
+const { UNAUTHORIZED_CODE } = require('../utils/constants');
 
 class ErrorAuthorization extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = ERROR_UNAUTHORIZED_ACCESS_401;
+    this.statusCode = UNAUTHORIZED_CODE;
   }
 }
 

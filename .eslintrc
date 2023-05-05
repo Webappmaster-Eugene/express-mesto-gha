@@ -1,14 +1,10 @@
 {
-  "env": {
-    "browser": true,
-    "commonjs": true,
-    "es2021": true
-  },
   "extends": "airbnb-base",
   "rules": {
-    "no-underscore-dangle": ["error",{"allow": [ "_id"]}],
-    "linebreak-style": 0,
-    "global-require": 0,
-    "eslint linebreak-style": [0, "error", "windows"]
-  }
+    "no-underscore-dangle": ["error", { "allow": ["_id"] }]
+  },
+  "LineLength": {
+    "maxLineLength": 120,
+    "checkMethodDescription": true
+}
 }

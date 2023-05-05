@@ -1,87 +1,57 @@
-/* eslint-disable no-underscore-dangle */
-/* eslint-disable object-curly-newline */
-/* eslint-disable quotes */
-/* eslint-disable comma-dangle */
-/* eslint-disable function-paren-newline */
-/* eslint-disable implicit-arrow-linebreak */
-// eslint-disable-next-line quotes
+const { CREATE_CODE } = require('../utils/constants');
+const ErrorForbidden = require('../errors/ErrorForbidden');
 
-const Card = require('../models/card');
-const { handlerErrors, handlerOk } = require('../utils/errorHandlers');
-const { CREATE_SUCCESS_CODE } = require('../utils/goodResponseCodes');
+const Card = require('../models/cards');
 
-const getCards = async (req, res) => {
-  try {
-    const allCards = await Card.find({});
-
-    return handlerOk(allCards, res);
-  } catch (err) {
-    return handlerErrors(res, err);
-  }
+module.exports.getAllCards = (req, res, next) => {
+  Card.find({})
+    .populate(['owner', 'likes'])
+    .then((cards) => res.send(cards))
+    .catch(next);
 };
 
-const createCard = async (req, res) => {
-  try {
-    const owner = req.user._id;
-
-    const { name, link, likes = [], createdAt = Date.now() } = req.body;
-    const newCard = await Card.create({ name, link, owner, likes, createdAt });
-
-    return res.status(CREATE_SUCCESS_CODE).send({ data: newCard });
-  } catch (err) {
-    return handlerErrors(res, err);
-  }
+module.exports.createCard = (req, res, next) => {
+  const { name, link } = req.body;
+  const ownerId = req.user._id;
+  Card.create({ name, link, owner: ownerId })
+    .then((card) => card.populate('owner'))
+    .then((card) => res.status(CREATE_CODE).send(card))
+    .catch(next);
 };
 
-const deleteCard = async (req, res) => {
-  try {
-    const id = req.params.cardId;
-    const removedCard = await Card.findByIdAndRemove(id);
-
-    return handlerOk(removedCard, res);
-  } catch (err) {
-    return handlerErrors(res, err);
-  }
+module.exports.deleteCard = (req, res, next) => {
+  Card.findById(req.params.cardId)
+    .orFail()
+    .then((card) => {
+      Card.deleteOne({ _id: card._id, owner: req.user._id })
+        .then((result) => {
+          if (result.deletedCount === 0) {
+            throw new ErrorForbidden(`Карточка с id ${req.params.cardId} не принадлежит пользователю с id ${req.user._id}`);
+          } else {
+            res.send({ message: 'Пост удалён' });
+          }
+        })
+        .catch(next);
+    })
+    .catch(next);
 };
 
-const likeCard = async (req, res) => {
-  try {
-    const owner = req.user._id;
-    const likedCard = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      {
-        $addToSet: { likes: owner },
-      },
-      { new: true },
-    );
-
-    return handlerOk(likedCard, res);
-  } catch (err) {
-    return handlerErrors(res, err);
-  }
+const cardLikesUpdate = (req, res, updateData, next) => {
+  Card.findByIdAndUpdate(req.params.cardId, updateData, { new: true })
+    .orFail()
+    .then((card) => card.populate(['owner', 'likes']))
+    .then((card) => res.send(card))
+    .catch(next);
 };
 
-const dislikeCard = async (req, res) => {
-  try {
-    const owner = req.user._id;
-    const dislikedCard = await Card.findByIdAndUpdate(
-      req.params.cardId,
-      {
-        $pull: { likes: owner },
-      },
-      { new: true },
-    );
-
-    return handlerOk(dislikedCard, res);
-  } catch (err) {
-    return handlerErrors(res, err);
-  }
+module.exports.likeCard = (req, res, next) => {
+  const ownerId = req.user._id;
+  const updateData = { $addToSet: { likes: ownerId } };
+  cardLikesUpdate(req, res, updateData, next);
 };
 
-module.exports = {
-  getCards,
-  createCard,
-  deleteCard,
-  likeCard,
-  dislikeCard,
+module.exports.dislikeCard = (req, res, next) => {
+  const ownerId = req.user._id;
+  const updateData = { $pull: { likes: ownerId } };
+  cardLikesUpdate(req, res, updateData, next);
 };

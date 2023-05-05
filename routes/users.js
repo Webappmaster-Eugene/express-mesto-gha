@@ -1,51 +1,40 @@
-/* eslint-disable quotes */
-
-const routerUser = require('express').Router();
+const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 
 const {
-  getUsers,
+  getAllUsers,
+  getUserInfo,
   getUser,
-  updateUser,
+  createUser,
+  updateUserInfo,
   updateUserAvatar,
-  // getUserInfo,
 } = require('../controllers/users');
 
-routerUser.get('/', getUsers);
+const { LINK_REGEXP } = require('../utils/constants');
 
-routerUser.get(
-  '/:userId',
-  celebrate({
-    params: Joi.object().keys({
-      userId: Joi.string().required().length(24),
-    }),
+router.get('/', getAllUsers);
+
+router.get('/me', getUserInfo);
+
+router.get('/:userId', celebrate({
+  params: Joi.object().keys({
+    userId: Joi.string().required().hex().length(24),
   }),
-  getUser,
-);
+}), getUser);
 
-// routerUser.post("/", createUser);
+router.post('/', createUser);
 
-routerUser.patch(
-  '/me',
-  celebrate({
-    body: Joi.object().keys({
-      name: Joi.string().required().min(2).max(30),
-      about: Joi.string().required().min(2).max(30),
-    }),
+router.patch('/me', celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
-  updateUser,
-);
+}), updateUserInfo);
 
-// routerUser.get("/me", getUserInfo);
-
-routerUser.patch(
-  '/me/avatar',
-  celebrate({
-    body: Joi.object().keys({
-      avatar: Joi.string().required(),
-    }),
+router.patch('/me/avatar', celebrate({
+  body: Joi.object().keys({
+    avatar: Joi.string().required().regex(LINK_REGEXP),
   }),
-  updateUserAvatar,
-);
+}), updateUserAvatar);
 
-module.exports = { routerUser };
+module.exports = router;

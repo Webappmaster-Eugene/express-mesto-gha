@@ -11,7 +11,9 @@ const getUsers = async (req, res, next) => {
   try {
     const allUsers = await User.find({}).orFail();
     res.status(OK_CODE).send(allUsers);
-  } catch (next) {}
+  } catch (err) {
+    next();
+  }
 };
 
 const getUser = async (req, res, next) => {
@@ -19,7 +21,9 @@ const getUser = async (req, res, next) => {
     const userId = req.params.userId;
     const findedUser = await User.findById(userId).orFail();
     res.status(OK_CODE).send(findedUser);
-  } catch (next) {}
+  } catch (err) {
+    next();
+  }
 };
 
 const getUserInfo = async (req, res, next) => {
@@ -27,7 +31,9 @@ const getUserInfo = async (req, res, next) => {
     const userId = req.user._id;
     const findedUser = await User.findById(userId).orFail();
     res.status(OK_CODE).send(findedUser);
-  } catch (next) {}
+  } catch (err) {
+    next();
+  }
 };
 
 const createUser = async (req, res, next) => {
@@ -42,11 +48,14 @@ const createUser = async (req, res, next) => {
       about,
       avatar,
     });
-    delete createdUser.password;
+    const dataUser = createdUser.toObject();
+    delete dataUser.password;
     // const data = user.toObject();
     // delete data.password;
-    res.status(CREATE_CODE).send(createdUser);
-  } catch (next) {}
+    res.status(CREATE_CODE).send(dataUser);
+  } catch (err) {
+    next();
+  }
 };
 
 const login = async (req, res, next) => {
@@ -67,7 +76,9 @@ const login = async (req, res, next) => {
     res
       .status(OK_CODE)
       .send({ message: 'Вы успешно вошли в профиль, поздравляем!' });
-  } catch (next) {}
+  } catch (err) {
+    next();
+  }
 };
 
 const updateUserInfo = async (req, res, next) => {
@@ -79,7 +90,9 @@ const updateUserInfo = async (req, res, next) => {
     }).orFail();
 
     res.status(OK_CODE).send(updatedUser);
-  } catch (next) {}
+  } catch (err) {
+    next();
+  }
 };
 
 const updateUserAvatar = async (req, res, next) => {
@@ -95,7 +108,9 @@ const updateUserAvatar = async (req, res, next) => {
     ).orFail();
 
     res.status(OK_CODE).send(updatedUser);
-  } catch (next) {}
+  } catch (err) {
+    next();
+  }
 };
 
 module.exports = {

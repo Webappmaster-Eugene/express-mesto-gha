@@ -1,10 +1,10 @@
 const { UNAUTHORIZED_ERROR } = require('../utils/responseCodes');
 
-class ErrorAutorizationErr extends Error {
+class ErrorAtAutorization extends Error {
   constructor(message) {
     super(message);
     this.statusCode = UNAUTHORIZED_ERROR;
   }
 }
 
-module.exports = { ErrorAutorizationErr };
+module.exports = { ErrorAtAutorization };

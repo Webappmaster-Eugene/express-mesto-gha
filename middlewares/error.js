@@ -3,7 +3,7 @@ const { ValidationError, DocumentNotFoundError, CastError } =
 
 const { ErrorForbidden } = require('../errors/ErrorForbidden');
 const { ErrorNotFound } = require('../errors/ErrorNotFound');
-const { ErrorAutorizationErr } = require('../errors/ErrorAutorization');
+const { ErrorAtAuthorization } = require('../errors/ErrorAutorization');
 
 const {
   BAD_REQUEST_ERROR,
@@ -32,7 +32,7 @@ const errors = (err, req, res, next) => {
     });
   }
   if (
-    err instanceof ErrorAutorizationErr ||
+    err instanceof ErrorAtAuthorization ||
     err instanceof ErrorForbidden ||
     err instanceof ErrorNotFound
   ) {

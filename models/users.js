@@ -3,7 +3,7 @@ const isEmail = require('validator/lib/isEmail');
 const isURL = require('validator/lib/isURL');
 const bcrypt = require('bcryptjs');
 
-const { ErrorAtAuthorization } = require('../errors/ErrorAutorization');
+const { ErrorAtAuthorizationEr } = require('../errors/ErrorAutorization');
 
 const userSchema = new mongoose.Schema(
   {
@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema(
         const findedUser = await this.findOne({ email }).select('+password');
 
         if (!findedUser) {
-          throw new ErrorAuthorization(
+          throw new ErrorAtAuthorizationEr(
             'Вы ввели неправильную почту или пароль!',
           );
         }
@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema(
         );
 
         if (!matchedPassword) {
-          throw new ErrorAtAuthorization(
+          throw new ErrorAtAuthorizationEr(
             'Вы ввели неправильную почту или пароль!',
           );
         }

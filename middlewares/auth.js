@@ -1,12 +1,12 @@
 const JWT = require('jsonwebtoken');
-const { ErrorAtAuthorization } = require('../errors/ErrorAutorization');
+const { ErrorAtAuthorizationEr } = require('../errors/ErrorAutorization');
 
 const { NODE_ENV, SECRET_KEY } = process.env;
 
 const auth = (req, res, next) => {
   const token = req.cookies.jwt;
   if (!token) {
-    return next(new ErrorAtAuthorization('Необходима авторизация'));
+    return next(new ErrorAtAuthorizationEr('Необходима авторизация'));
   }
   let payload;
   try {
@@ -15,7 +15,7 @@ const auth = (req, res, next) => {
       NODE_ENV === 'production' ? SECRET_KEY : 'dev-secret-key',
     );
   } catch (err) {
-    return next(new ErrorAtAuthorization('Необходима авторизация'));
+    return next(new ErrorAtAuthorizationEr('Необходима авторизация'));
   }
   req.user = payload;
   return next();

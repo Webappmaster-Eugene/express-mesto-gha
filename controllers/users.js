@@ -46,13 +46,34 @@ const createUser = async (req, res, next) => {
       name,
       about,
       avatar,
-    })
-      .orFail()
-      .toObject();
+    });
     delete createdUser.password;
     // const data = user.toObject();
     // delete data.password;
     return res.status(CREATE_CODE).send(createdUser);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const login = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const findedUser = await User.fUserByMailPassword(email, password);
+    const token = JWT.sign(
+      { _id: findedUser._id },
+      NODE_ENV === 'production' ? SECRET_KEY : 'secretdevkey',
+      { expiresIn: '7d' },
+    );
+
+    res.cookie('jwt', token, {
+      maxAge: 3600 * 1000 * 24 * 7,
+      httpOnly: true,
+      sameSite: true,
+    });
+    res
+      .status(OK_CODE)
+      .send({ message: 'Вы успешно вошли в профиль, поздравляем!' });
   } catch (err) {
     return next(err);
   }
@@ -90,35 +111,12 @@ const updateUserAvatar = async (req, res, next) => {
   }
 };
 
-const login = async (req, res, next) => {
-  const { email, password } = req.body;
-  try {
-    const findedUser = await User.findUserByCredentials(email, password);
-    const token = JWT.sign(
-      { _id: findedUser._id },
-      NODE_ENV === 'production' ? SECRET_KEY : 'secretdevkey',
-      { expiresIn: '7d' },
-    );
-
-    res.cookie('jwt', token, {
-      maxAge: 3600 * 1000 * 24 * 7,
-      httpOnly: true,
-      sameSite: true,
-    });
-    res
-      .status(OK_CODE)
-      .send({ message: 'Вы успешно вошли в профиль, поздравляем!' });
-  } catch (err) {
-    return next(err);
-  }
-};
-
 module.exports = {
   getUsers,
   getUser,
   getUserInfo,
   createUser,
+  login,
   updateUserInfo,
   updateUserAvatar,
-  login,
 };

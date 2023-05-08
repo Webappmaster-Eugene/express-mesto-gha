@@ -12,13 +12,13 @@ const auth = (req, res, next) => {
   try {
     payload = JWT.verify(
       token,
-      NODE_ENV === 'production' ? SECRET_KEY : 'secretdevkey',
+      NODE_ENV === 'production' ? SECRET_KEY : 'dev-secret-key',
     );
   } catch (err) {
     return next(new ErrorAuthorization('Необходима авторизация'));
   }
   req.user = payload;
-  return next(err);
+  return next();
 };
 
 module.exports = { auth };

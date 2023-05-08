@@ -15,7 +15,7 @@ const { notFoundRouter } = require('./routes/pathNotFound');
 
 const { auth } = require('./middlewares/auth');
 
-const errors = require('./middlewares/error');
+const { errors } = require('./middlewares/error');
 
 const PORT = process.env.PORT || 3000;
 const DATABASE = process.env.DATABASE || 'mongodb://localhost:27017/mestodb';

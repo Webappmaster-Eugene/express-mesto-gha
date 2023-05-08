@@ -8,7 +8,7 @@ const {
   SERVER_ERROR,
 } = require('../utils/responseCodes');
 
-module.exports = (err, req, res, next) => {
+const auth = (err, req, res, next) => {
   if (err instanceof ValidationError) {
     const errorMessage = Object.values(err.errors)
       .map((error) => error.message)
@@ -48,3 +48,5 @@ module.exports = (err, req, res, next) => {
   });
   return next();
 };
+
+module.exports = { auth };

@@ -12,7 +12,7 @@ const getUsers = async (req, res, next) => {
     const allUsers = await User.find({}).orFail();
     return res.status(OK_CODE).send(allUsers);
   } catch (err) {
-    return next(err);
+    return next();
   }
 };
 
@@ -22,7 +22,7 @@ const getUser = async (req, res, next) => {
     const findedUser = await User.findById(userId).orFail();
     return res.status(OK_CODE).send(findedUser);
   } catch (err) {
-    return next(err);
+    return next();
   }
 };
 
@@ -32,7 +32,7 @@ const getUserInfo = async (req, res, next) => {
     const findedUser = await User.findById(userId).orFail();
     return res.status(OK_CODE).send(findedUser);
   } catch (err) {
-    return next(err);
+    return next();
   }
 };
 

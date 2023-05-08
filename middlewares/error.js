@@ -1,6 +1,10 @@
 const { ValidationError, DocumentNotFoundError, CastError } =
   require('mongoose').Error;
 
+const ErrorAutorization = require('../errors/ErrorAutorization');
+const ErrorForbidden = require('../errors/ErrorForbidden');
+const ErrorNotFound = require('../errors/ErrorNotFound');
+
 const {
   BAD_REQUEST_ERROR,
   NOT_FOUND_ERROR,

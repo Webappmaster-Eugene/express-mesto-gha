@@ -12,7 +12,7 @@ const auth = (req, res, next) => {
   try {
     payload = JWT.verify(
       token,
-      NODE_ENV === 'production' ? SECRET_KEY : 'dev-secret-key',
+      NODE_ENV === 'production' ? SECRET_KEY : 'secretdevkey',
     );
   } catch (err) {
     return next(new ErrorAtAuthorizationEr('Необходима авторизация'));

@@ -10,7 +10,7 @@ const User = require('../models/users');
 const getUsers = async (req, res, next) => {
   try {
     const allUsers = await User.find({}).orFail();
-    res.status(OK_CODE).send(allUsers);
+    return res.status(OK_CODE).send(allUsers);
   } catch (err) {
     next();
   }
@@ -20,7 +20,7 @@ const getUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
     const findedUser = await User.findById(userId).orFail();
-    res.status(OK_CODE).send(findedUser);
+    return res.status(OK_CODE).send(findedUser);
   } catch (err) {
     next();
   }
@@ -30,7 +30,7 @@ const getUserInfo = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const findedUser = await User.findById(userId).orFail();
-    res.status(OK_CODE).send(findedUser);
+    return res.status(OK_CODE).send(findedUser);
   } catch (err) {
     next();
   }
@@ -52,9 +52,9 @@ const createUser = async (req, res, next) => {
     delete dataUser.password;
     // const data = user.toObject();
     // delete data.password;
-    res.status(CREATE_CODE).send(dataUser);
+    return res.status(CREATE_CODE).send(dataUser);
   } catch (err) {
-    next();
+    next(err);
   }
 };
 

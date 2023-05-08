@@ -1,9 +1,9 @@
 const { ValidationError, DocumentNotFoundError, CastError } =
   require('mongoose').Error;
 
-const { ErrorAutorization } = require('../errors/ErrorAutorization');
 const { ErrorForbidden } = require('../errors/ErrorForbidden');
 const { ErrorNotFound } = require('../errors/ErrorNotFound');
+const { ErrorAutorizationErr } = require('../errors/ErrorAutorization');
 
 const {
   BAD_REQUEST_ERROR,
@@ -32,7 +32,7 @@ const errors = (err, req, res, next) => {
     });
   }
   if (
-    err instanceof ErrorAutorization ||
+    err instanceof ErrorAutorizationErr ||
     err instanceof ErrorForbidden ||
     err instanceof ErrorNotFound
   ) {

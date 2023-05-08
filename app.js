@@ -6,7 +6,6 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const validationErrors = require('celebrate').errors;
 
-// const rootRouter = require('./routes/index');
 const { userRouter } = require('./routes/users');
 const { cardRouter } = require('./routes/cards');
 const { signInRouter } = require('./routes/singin');

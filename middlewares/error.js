@@ -1,54 +1,50 @@
-const {
-  ValidationError,
-  DocumentNotFoundError,
-  CastError,
-} = require('mongoose').Error;
-
-// const ErrorAutorization = require('../errors/ErrorAutorization');
-// const ErrorForbidden = require('../errors/ErrorForbidden');
-// const ErrorNotFound = require('../errors/ErrorNotFound');
+const { ValidationError, DocumentNotFoundError, CastError } =
+  require('mongoose').Error;
 
 const {
-  BAD_REQUEST_CODE,
-  CONFLICT_CODE,
-  NOT_FOUND_CODE,
-  DEFAULT_CODE,
-} = require('../utils/constants');
+  BAD_REQUEST_ERROR,
+  NOT_FOUND_ERROR,
+  CONFLICT_ERROR,
+  SERVER_ERROR,
+} = require('../utils/responseCodes');
 
-module.exports = ((err, req, res, next) => {
+module.exports = (err, req, res, next) => {
   if (err instanceof ValidationError) {
-    const errorMessage = Object.values(err.errors).map((error) => error.message).join(' ');
-    return res.status(BAD_REQUEST_CODE).send({
+    const errorMessage = Object.values(err.errors)
+      .map((error) => error.message)
+      .join(' ');
+    return res.status(BAD_REQUEST_ERROR).send({
       message: `Переданы некорректные данные. ${errorMessage}`,
     });
   }
+
   if (err instanceof DocumentNotFoundError) {
-    return res.status(NOT_FOUND_CODE).send({
+    return res.status(NOT_FOUND_ERROR).send({
       message: 'В базе данных не найден документ с таким ID',
     });
   }
+
   if (err instanceof CastError) {
-    return res.status(BAD_REQUEST_CODE).send({
+    return res.status(BAD_REQUEST_ERROR).send({
       message: `Передан некорректный ID: ${err.value}`,
     });
   }
-  // if (err instanceof ErrorAutorization || err instanceof ErrorForbidden || err instanceof ErrorNotFound) {
-  //   return res.status(err.statusCode).send({
-  //     message: err.message,
-  //   });
-  // }
+
+  if (err.code === 11000) {
+    return res.status(CONFLICT_ERROR).send({
+      message:
+        'Указанный email уже зарегистрирован. Пожалуйста используйте другой email',
+    });
+  }
+
   if (err.statusCode) {
     return res.status(err.statusCode).send({
       message: err.message,
     });
   }
-  if (err.code === 11000) {
-    return res.status(CONFLICT_CODE).send({
-      message: 'Указанный email уже зарегистрирован. Пожалуйста используйте другой email',
-    });
-  }
-  res.status(DEFAULT_CODE).send({
+
+  return res.status(SERVER_ERROR).send({
     message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
   });
   return next();
-});
+};

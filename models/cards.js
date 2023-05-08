@@ -1,35 +1,40 @@
 const mongoose = require('mongoose');
-const { LINK_REGEXP } = require('../utils/constants');
+// const { URL_REGEXP } = require('../utils/urlRegexp');
 
-const cardSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, 'Поле "name" должно быть заполнено'],
-    minlength: [2, 'Минимальная длина поля "name" 2 символа'],
-    maxlength: [30, 'Максимальная длина поля "name" 30 символов'],
-  },
-  link: {
-    type: String,
-    required: [true, 'Поле "link" должно быть заполнено'],
-    validate: {
-      validator: (v) => LINK_REGEXP.test(v),
-      message: 'Неправильный формат ссылки',
+const cardSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Поле "name" является обязательным для заполнения'],
+      minlength: [2, 'Минимальная длина `name` 2 символа'],
+      maxlength: [30, 'Максимальная длина поля `name` 30 символов'],
+    },
+    link: {
+      type: String,
+      required: [true, 'Поле `link` должно быть заполнено'],
+      validate: {
+        validator: (v) => isURL(v),
+        message: 'Ссылка `link` невалидна',
+      },
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users',
+      required: [true, 'Поле `owner` является обязательным для заполнения'],
+    },
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+        default: [],
+      },
+    ],
+    createdAt: {
+      type: Date,
+      default: Date.now,
     },
   },
-  owner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
-    required: [true, 'Поле "owner" должно быть заполнено'],
-  },
-  likes: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'users',
-    default: [],
-  }],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-}, { versionKey: false });
+  { versionKey: false },
+);
 
 module.exports = mongoose.model('cards', cardSchema);

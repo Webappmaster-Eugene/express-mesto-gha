@@ -59,7 +59,7 @@ const likeCard = async (req, res, next) => {
         $addToSet: { likes: ownerId },
       },
       { new: true },
-    );
+    ).orFail();
 
     return res.status(OK_CODE).send(likedCard);
   } catch (err) {
@@ -76,7 +76,7 @@ const dislikeCard = async (req, res, next) => {
         $pull: { likes: ownerId },
       },
       { new: true },
-    );
+    ).orFail();
 
     return res.status(OK_CODE).send(dislikedCard);
   } catch (err) {

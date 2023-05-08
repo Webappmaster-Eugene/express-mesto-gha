@@ -18,17 +18,17 @@ const errors = (err, req, res, next) => {
       .map((error) => error.message)
       .join(' ');
     return res.status(BAD_REQUEST_ERROR).send({
-      message: `Переданы некорректные данные. ${errorMessage}`,
+      message: `Вы передали некорректные данные - ${errorMessage}`,
     });
   }
   if (err instanceof DocumentNotFoundError) {
     return res.status(NOT_FOUND_ERROR).send({
-      message: 'В базе данных не найден документ с таким ID',
+      message: 'В базе данных MongoDB не найден документ c указанным ID',
     });
   }
   if (err instanceof CastError) {
     return res.status(BAD_REQUEST_ERROR).send({
-      message: `Передан некорректный ID: ${err.value}`,
+      message: `Вы передали некорректный ID: ${err.value}`,
     });
   }
   if (
@@ -44,7 +44,7 @@ const errors = (err, req, res, next) => {
   if (err.code === 11000) {
     return res.status(CONFLICT_ERROR).send({
       message:
-        'Указанный email уже зарегистрирован. Пожалуйста используйте другой email',
+        'Указанный вами почтовый email-адарис уже зарегистрирован. Пожалуйста используйте другой email!',
     });
   }
   res.status(SERVER_ERROR).send({

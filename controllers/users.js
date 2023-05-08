@@ -50,8 +50,6 @@ const createUser = async (req, res, next) => {
     });
     const dataUser = createdUser.toObject();
     delete dataUser.password;
-    // const data = user.toObject();
-    // delete data.password;
     return res.status(CREATE_CODE).send(dataUser);
   } catch (err) {
     next(err);

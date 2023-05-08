@@ -34,11 +34,11 @@ const deleteCard = async (req, res, next) => {
     const deletedCard = await Card.deleteOne({
       _id: findedCard._id,
       owner: req.user._id,
-    }).orFail();
+    });
 
     if (!deletedCard) {
       throw new ErrorForbidden(
-        `Карточка с id ${req.params.cardId} не принадлежит пользователю с id ${req.user._id}`,
+        `Ошибка доступа! Карточка с данным id ${req.params.cardId} не принадлежит пользователю с _id ${req.user._id}`,
       );
     } else {
       res

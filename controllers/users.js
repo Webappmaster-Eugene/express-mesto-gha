@@ -71,7 +71,7 @@ const login = async (req, res, next) => {
       httpOnly: true,
       sameSite: true,
     });
-    res
+    return res
       .status(OK_CODE)
       .send({ message: 'Вы успешно вошли в профиль, поздравляем!' });
   } catch (err) {

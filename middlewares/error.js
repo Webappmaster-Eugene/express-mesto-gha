@@ -17,16 +17,23 @@ module.exports = (err, req, res, next) => {
       message: `Переданы некорректные данные. ${errorMessage}`,
     });
   }
-
   if (err instanceof DocumentNotFoundError) {
     return res.status(NOT_FOUND_ERROR).send({
       message: 'В базе данных не найден документ с таким ID',
     });
   }
-
   if (err instanceof CastError) {
     return res.status(BAD_REQUEST_ERROR).send({
       message: `Передан некорректный ID: ${err.value}`,
+    });
+  }
+  if (
+    err instanceof ErrorAutorization ||
+    err instanceof ErrorForbidden ||
+    err instanceof ErrorNotFound
+  ) {
+    return res.status(err.statusCode).send({
+      message: err.message,
     });
   }
 
@@ -36,14 +43,7 @@ module.exports = (err, req, res, next) => {
         'Указанный email уже зарегистрирован. Пожалуйста используйте другой email',
     });
   }
-
-  if (err.statusCode) {
-    return res.status(err.statusCode).send({
-      message: err.message,
-    });
-  }
-
-  return res.status(SERVER_ERROR).send({
+  res.status(SERVER_ERROR).send({
     message: `Произошла неизвестная ошибка ${err.name}: ${err.message}`,
   });
   return next();

@@ -21,7 +21,7 @@ const createCard = async (req, res, next) => {
       name,
       link,
       owner: ownerId,
-    }).orFail();
+    });
     return res.status(CREATE_CODE).send(createdCard);
   } catch (err) {
     return next(err);
@@ -56,7 +56,7 @@ const likeCard = async (req, res, next) => {
   try {
     const likedCard = Card.findByIdAndUpdate(req.params.cardId, addedLikes, {
       new: true,
-    }).orFail();
+    });
 
     return res.status(OK_CODE).send(likedCard);
   } catch (err) {
@@ -74,7 +74,7 @@ const dislikeCard = (req, res, next) => {
       {
         new: true,
       },
-    ).orFail();
+    );
 
     return res.status(OK_CODE).send(dislikedCard);
   } catch (err) {

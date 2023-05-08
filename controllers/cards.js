@@ -52,11 +52,14 @@ const deleteCard = async (req, res, next) => {
 
 const likeCard = async (req, res, next) => {
   const ownerId = req.user._id;
-  const addedLikes = { $addToSet: { likes: ownerId } };
   try {
-    const likedCard = Card.findByIdAndUpdate(req.params.cardId, addedLikes, {
-      new: true,
-    });
+    const likedCard = await Card.findByIdAndUpdate(
+      req.params.cardId,
+      {
+        $addToSet: { likes: ownerId },
+      },
+      { new: true },
+    );
 
     return res.status(OK_CODE).send(likedCard);
   } catch (err) {
@@ -64,16 +67,15 @@ const likeCard = async (req, res, next) => {
   }
 };
 
-const dislikeCard = (req, res, next) => {
+const dislikeCard = async (req, res, next) => {
   const ownerId = req.user._id;
-  const deletedLikes = { $pull: { likes: ownerId } };
   try {
-    const dislikedCard = Card.findByIdAndUpdate(
+    const dislikedCard = await Card.findByIdAndUpdate(
       req.params.cardId,
-      deletedLikes,
       {
-        new: true,
+        $pull: { likes: ownerId },
       },
+      { new: true },
     );
 
     return res.status(OK_CODE).send(dislikedCard);

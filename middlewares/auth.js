@@ -3,7 +3,7 @@ const { ErrorAuthorization } = require('../errors/ErrorAutorization');
 
 const { NODE_ENV, SECRET_KEY } = process.env;
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   const token = req.cookies.jwt;
   if (!token) {
     return next(new ErrorAuthorization('Необходима авторизация'));
@@ -18,5 +18,7 @@ module.exports = (req, res, next) => {
     return next(new ErrorAuthorization('Необходима авторизация'));
   }
   req.user = payload;
-  return next();
+  return next(err);
 };
+
+module.exports = { auth };

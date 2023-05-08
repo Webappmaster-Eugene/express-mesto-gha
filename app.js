@@ -7,6 +7,13 @@ const helmet = require('helmet');
 const validationErrors = require('celebrate').errors;
 
 // const rootRouter = require('./routes/index');
+const { userRouter } = require('./routes/users');
+const { cardRouter } = require('./routes/cards');
+const { signInRouter } = require('./routes/singin');
+const { signUpRouter } = require('./routes/singup');
+const { notFoundRouter } = require('./routes/pathNotFound');
+
+const { auth } = require('./middlewares/auth');
 
 const errors = require('./middlewares/error');
 
@@ -14,13 +21,6 @@ const PORT = process.env.PORT || 3000;
 const DATABASE = process.env.DATABASE || 'mongodb://localhost:27017/mestodb';
 
 const app = express();
-
-const { userRouter } = require('./routes/users');
-const { cardRouter } = require('./routes/cards');
-const { signInRouter } = require('./routes/singin');
-const { signUpRouter } = require('./routes/singup');
-const { notFoundRouter } = require('./routes/pathNotFound');
-const auth = require('./middlewares/auth');
 
 mongoose.connect(DATABASE);
 

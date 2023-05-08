@@ -78,7 +78,8 @@ const login = async (req, res, next) => {
       .status(OK_CODE)
       .send({ message: 'Вы успешно вошли в профиль, поздравляем!' });
   } catch (err) {
-    next();
+    console.log(err);
+    next(err);
   }
 };
 

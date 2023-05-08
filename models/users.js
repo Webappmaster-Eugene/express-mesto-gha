@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema(
   {
     versionKey: false,
     statics: {
-      async fUserByMailPassword(email, password) {
+      async findUserByMailPassword(email, password) {
         const findedUser = await this.findOne({ email }).select('+password');
 
         if (!findedUser) {
@@ -58,6 +58,8 @@ const userSchema = new mongoose.Schema(
           password,
           findedUser.password,
         );
+
+        console.log(matchedPassword);
 
         if (!matchedPassword) {
           throw new ErrorAtAuthorizationEr(

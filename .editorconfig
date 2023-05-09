@@ -1,4 +1,6 @@
 # http://editorconfig.org
+
+
 # A special property that should be specified at the top of the file outside of
 
 # any sections. Set to true to stop .editor config file search on current file
@@ -34,7 +36,7 @@ charset = utf-8
 
 # Possible values - true, false
 
-trim_trailing_whitespace = true
+trim_trailing_whitespace = false
 
 # Denotes whether file should end with a newline
 

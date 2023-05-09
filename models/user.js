@@ -59,8 +59,6 @@ const userSchema = new mongoose.Schema(
           findedUser.password,
         );
 
-        console.log(matchedPassword);
-
         if (!matchedPassword) {
           throw new ErrorAtAuthorizationEr(
             'Вы ввели неправильную почту или пароль!',
@@ -73,4 +71,4 @@ const userSchema = new mongoose.Schema(
   },
 );
 
-module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('user', userSchema);

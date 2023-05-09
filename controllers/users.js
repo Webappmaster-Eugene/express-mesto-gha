@@ -1,39 +1,45 @@
+/* eslint-disable object-curly-newline */
 const bcrypt = require('bcryptjs');
 const JWT = require('jsonwebtoken');
 
 const { OK_CODE, CREATE_CODE } = require('../utils/responseCodes');
 
-const { NODE_ENV, SECRET_KEY } = process.env;
+const { NODE_ENV, SECRET_KEY } = require('../config');
 
-const User = require('../models/users');
+const User = require('../models/user');
 
 const getUsers = async (req, res, next) => {
   try {
     const allUsers = await User.find({}).orFail();
     return res.status(OK_CODE).send(allUsers);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
-const getUser = async (req, res, next) => {
+async function findUser(req, res, userId, next) {
   try {
-    const userId = req.params.userId;
     const findedUser = await User.findById(userId).orFail();
     return res.status(OK_CODE).send(findedUser);
   } catch (err) {
-    next(err);
+    return next(err);
   }
+}
+
+const getUser = async (req, res, next) => {
+  // try {
+  const { userId } = req.params;
+  findUser(req, res, userId, next);
+  //   const findedUser = await User.findById(userId).orFail();
+  //   return res.status(OK_CODE).send(findedUser);
+  // } catch (err) {
+  //   return next(err);
+  // }
 };
 
 const getUserInfo = async (req, res, next) => {
-  try {
-    const userId = req.user._id;
-    const findedUser = await User.findById(userId).orFail();
-    return res.status(OK_CODE).send(findedUser);
-  } catch (err) {
-    next(err);
-  }
+  const userId = req.user._id;
+  findUser(req, res, userId, next);
 };
 
 const createUser = async (req, res, next) => {
@@ -52,7 +58,7 @@ const createUser = async (req, res, next) => {
     delete dataUser.password;
     return res.status(CREATE_CODE).send(dataUser);
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -72,45 +78,49 @@ const login = async (req, res, next) => {
       httpOnly: true,
       sameSite: true,
     });
-    res
+    return res
       .status(OK_CODE)
       .send({ message: 'Вы успешно вошли в профиль, поздравляем!' });
   } catch (err) {
-    console.log(err);
-    next(err);
+    return next(err);
   }
 };
 
-const updateUserInfo = async (req, res, next) => {
-  const updateInfo = req.body;
-  try {
-    const updatedUser = await User.findByIdAndUpdate(req.user._id, updateInfo, {
-      new: true,
-      runValidators: true,
-    }).orFail();
-
-    res.status(OK_CODE).send(updatedUser);
-  } catch (err) {
-    next();
-  }
-};
-
-const updateUserAvatar = async (req, res, next) => {
-  const updateAvatar = req.body;
+async function updateUser(req, res, next) {
+  const updateUserInfo = req.body;
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
-      updateAvatar,
+      updateUserInfo,
       {
         new: true,
         runValidators: true,
       },
     ).orFail();
 
-    res.status(OK_CODE).send(updatedUser);
+    return res.status(OK_CODE).send(updatedUser);
   } catch (err) {
-    next();
+    return next(err);
   }
+}
+
+const updateUserInfo = async (req, res, next) => {
+  updateUser(req, res, next);
+  // const updateInfo = req.body;
+  // try {
+  //   const updatedUser = await User.findByIdAndUpdate(req.user._id, updateInfo, {
+  //     new: true,
+  //     runValidators: true,
+  //   }).orFail();
+
+  //   return res.status(OK_CODE).send(updatedUser);
+  // } catch (err) {
+  //   return next();
+  // }
+};
+
+const updateUserAvatar = async (req, res, next) => {
+  updateUser(req, res, next);
 };
 
 module.exports = {

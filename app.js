@@ -1,10 +1,12 @@
 require('dotenv').config();
 
-const express = require('express');
-const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
-const helmet = require('helmet');
-const validationErrors = require('celebrate').errors;
+const {
+  express,
+  mongoose,
+  cookieParser,
+  helmet,
+  validationErrors,
+} = require('./config');
 
 const { userRouter } = require('./routes/users');
 const { cardRouter } = require('./routes/cards');

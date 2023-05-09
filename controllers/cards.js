@@ -1,7 +1,7 @@
 const { OK_CODE, CREATE_CODE } = require('../utils/responseCodes');
 const { ErrorForbidden } = require('../errors/ErrorForbidden');
 
-const Card = require('../models/cards');
+const Card = require('../models/card');
 
 const getCards = async (req, res, next) => {
   try {
@@ -35,13 +35,12 @@ const deleteCard = async (req, res, next) => {
       _id: findedCard._id,
       owner: req.user._id,
     });
-    console.log(deletedCard);
     if (deletedCard.deletedCount === 0) {
       throw new ErrorForbidden(
         `Ошибка доступа! Карточка с данным id ${req.params.cardId} не принадлежит пользователю с _id ${req.user._id}`,
       );
     } else {
-      res
+      return res
         .status(OK_CODE)
         .send({ message: 'Карточка удалена успешно и без ошибок' });
     }
